@@ -26,7 +26,7 @@ OE_HOME_EXT="/opt/$OE_USER/$OE_USER-server"
 OE_VERSION="saas-5"
 
 #set the superadmin password
-OE_SUPERADMIN="superadminpassword"
+OE_SUPERADMIN="admin"
 OE_CONFIG="$OE_USER-server"
 
 #--------------------------------------------------
