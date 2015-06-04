@@ -78,12 +78,12 @@ else
   sudo git clone --branch $OE_VERSION --depth 1 $ODOO_REPO $OE_HOME_EXT/
 fi
 
+echo -e "\n---- Setting permissions on home folder ----"
+sudo chown -R $OE_USER:$OE_USER $OE_HOME
+
 echo -e "\n---- Create custom module directory ----"
 sudo su $OE_USER -c "mkdir -p $OE_HOME/custom"
 sudo su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
-
-echo -e "\n---- Setting permissions on home folder ----"
-sudo chown -R $OE_USER:$OE_USER $OE_HOME
 
 echo -e "* Create server config file"
 sudo cp $OE_HOME_EXT/debian/openerp-server.conf /etc/$OE_CONFIG.conf
