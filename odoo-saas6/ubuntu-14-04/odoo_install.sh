@@ -1,7 +1,7 @@
 #!/bin/bash
 ################################################################################
-# Script for Installation: ODOO Saas4/Trunk server on Ubuntu 14.04 LTS
-# Author: André Schenkels, ICTSTUDIO 2014
+# Script for Installation: ODOO server saas6 version on Ubuntu 14.04 LTS
+# Original Author: André Schenkels
 #-------------------------------------------------------------------------------
 #
 # This script will install ODOO Server on
@@ -33,7 +33,7 @@ OE_CONFIG="$OE_USER-server"
 # Update Server
 #--------------------------------------------------
 echo -e "\n---- Update Server ----"
-sudo apt-get update
+sudo apt-get update -y
 sudo apt-get upgrade -y
 
 #--------------------------------------------------
@@ -55,10 +55,15 @@ echo -e "\n---- Install tool packages ----"
 sudo apt-get install wget subversion git bzr bzrtools python-pip -y
 
 echo -e "\n---- Install python packages ----"
-sudo apt-get install python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pybabel python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2 python-pypdf -y
+sudo apt-get install python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml python-mako python-openid python-psycopg2 python-pybabel python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi python-docutils python-psutil python-mock python-unittest2 python-jinja2 python-pypdf python-decorator python-passlib -y
 
 echo -e "\n---- Install python libraries ----"
 sudo pip install gdata
+
+echo -e "\n---- Install nodejs and lessc ----"
+wget -qO- https://deb.nodesource.com/setup | bash -
+apt-get install -y nodejs
+npm install -g less less-plugin-clean-css
 
 echo -e "\n---- Create ODOO system user ----"
 sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
@@ -81,7 +86,7 @@ echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
 
 echo -e "* Create server config file"
-sudo cp $OE_HOME_EXT/setup/debian/openerp-server.conf /etc/$OE_CONFIG.conf
+sudo cp $OE_HOME_EXT/debian/openerp-server.conf /etc/$OE_CONFIG.conf
 sudo chown $OE_USER:$OE_USER /etc/$OE_CONFIG.conf
 sudo chmod 640 /etc/$OE_CONFIG.conf
 
@@ -180,5 +185,14 @@ sudo chown root: /etc/init.d/$OE_CONFIG
 echo -e "* Start ODOO on Startup"
 sudo update-rc.d $OE_CONFIG defaults
 
-echo "Done! The ODOO server can be started with /etc/init.d/$OE_CONFIG"
+#--------------------------------------------------
+# Use 80 instead of 8069 port
+#--------------------------------------------------
+echo -e "Add iptables rules for port forwarding ......"
+echo "iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8069" > /etc/rc.local
+echo "exit 0" >> /etc/rc.local
 
+echo "Done! The ODOO server can be started with /etc/init.d/$OE_CONFIG"
+echo "Rebooting, please wait ....... "
+
+sudo reboot

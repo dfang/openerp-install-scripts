@@ -1,7 +1,7 @@
 #!/bin/bash
 ################################################################################
-# Script for Installation: ODOO Saas4/Trunk server on Ubuntu 14.04 LTS
-# Author: André Schenkels, ICTSTUDIO 2014
+# Script for Installation: ODOO server version 8.0 on Ubuntu 14.04 LTS
+# Original Author: André Schenkels
 #-------------------------------------------------------------------------------
 #
 # This script will install ODOO Server on
@@ -22,7 +22,7 @@ OE_USER="odoo"
 OE_HOME="/opt/$OE_USER"
 OE_HOME_EXT="/opt/$OE_USER/$OE_USER-server"
 
-#Enter version for checkout "8.0" for version 8.0, "7.0 (version 7), saas-4, saas-5 (opendays version) and "master" for trunk
+#Enter version for checkout "8.0" for version 8.0, saas-6 (sass version) and "master" for trunk
 OE_VERSION="8.0"
 
 #set the superadmin password
@@ -33,7 +33,7 @@ OE_CONFIG="$OE_USER-server"
 # Update Server
 #--------------------------------------------------
 echo -e "\n---- Update Server ----"
-sudo apt-get update
+sudo apt-get update -y
 sudo apt-get upgrade -y
 
 #--------------------------------------------------
@@ -64,7 +64,7 @@ echo -e "\n---- Create ODOO system user ----"
 sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
 
 echo -e "\n---- Create Log directory ----"
-sudo mkdir /var/log/$OE_USER
+sudo mkdir -p /var/log/$OE_USER
 sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
 
 #--------------------------------------------------
@@ -74,8 +74,8 @@ echo -e "\n==== Installing ODOO Server ===="
 sudo git clone --branch $OE_VERSION --depth 1 https://www.github.com/odoo/odoo $OE_HOME_EXT/
 
 echo -e "\n---- Create custom module directory ----"
-sudo su $OE_USER -c "mkdir $OE_HOME/custom"
-sudo su $OE_USER -c "mkdir $OE_HOME/custom/addons"
+sudo su $OE_USER -c "mkdir -p $OE_HOME/custom"
+sudo su $OE_USER -c "mkdir -p $OE_HOME/custom/addons"
 
 echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
@@ -181,4 +181,3 @@ echo -e "* Start ODOO on Startup"
 sudo update-rc.d $OE_CONFIG defaults
 
 echo "Done! The ODOO server can be started with /etc/init.d/$OE_CONFIG"
-
