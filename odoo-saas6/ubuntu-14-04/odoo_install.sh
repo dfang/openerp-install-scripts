@@ -16,11 +16,10 @@
 #
 ################################################################################
 
-##fixed parameters
-#openerp
 OE_USER="odoo"
 OE_HOME="/opt/$OE_USER"
 OE_HOME_EXT="/opt/$OE_USER/$OE_USER-server"
+ODOO_REPO="https://www.github.com/odoo/odoo"
 
 #Enter version for checkout "8.0" for version 8.0, "saas-6 for sass-6 branch and "master" for trunk
 OE_VERSION="saas-6"
@@ -70,7 +69,7 @@ sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' -
 
 echo -e "\n---- Create Log directory ----"
 sudo mkdir -p /var/log/$OE_USER
-sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
+sudo chown -R $OE_USER:$OE_USER /var/log/$OE_USER
 
 #--------------------------------------------------
 # Install ODOO
@@ -78,10 +77,10 @@ sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
 echo -e "\n==== Installing ODOO Server ===="
 if [ -d $OE_HOME_EXT ] && [ -d $OE_HOME_EXT/.git ]
 then
-  echo "\n---- Directory $OE_HOME_EXT exists and also $OE_HOME_EXT/.git exists, so try to update code from git repository ----"
+  echo -e "\n---- Directory $OE_HOME_EXT exists and also $OE_HOME_EXT/.git exists, so try to update code from git repository ----"
   cd $OE_HOME_EXT/ && sudo git pull
 else
-  sudo git clone --branch $OE_VERSION --depth 1 https://www.github.com/odoo/odoo $OE_HOME_EXT/
+  sudo git clone --branch $OE_VERSION --depth 1 $ODOO_REPO $OE_HOME_EXT/
 fi
 
 echo -e "\n---- Create custom module directory ----"
